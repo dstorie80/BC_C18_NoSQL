@@ -75,7 +75,8 @@ const thoughtsController = {
 
   // delete a thought by its _id and remove it from the User's friend list as well
   deleteThought({ params, body }, res) {
-    Thoughts.findOneAndDelete({ _id: params.id })
+    thoughts
+      .findOneAndDelete({ _id: params.id })
       .then((deletedThought) => {
         if (!deletedThought) {
           return res
@@ -105,11 +106,12 @@ const thoughtsController = {
 
   // Create reaction for a thought
   addReaction({ params, body }, res) {
-    Thoughts.findOneAndUpdate(
-      { _id: params.thoughtId },
-      { $push: { reactions: body } },
-      { new: true, runValidators: true }
-    )
+    thoughts
+      .findOneAndUpdate(
+        { _id: params.thoughtId },
+        { $push: { reactions: body } },
+        { new: true, runValidators: true }
+      )
       .then((thoughtData) => {
         if (!thoughtData) {
           res.status(404).json({ message: "No thought found with this id!" });
@@ -125,11 +127,12 @@ const thoughtsController = {
 
   // Delete reaction for a thought
   removeReaction({ params, body }, res) {
-    Thoughts.findOneAndUpdate(
-      { _id: params.thoughtId },
-      { $pull: { reactions: { reactionId: params.reactionId } } },
-      { new: true }
-    )
+    thoughts
+      .findOneAndUpdate(
+        { _id: params.thoughtId },
+        { $pull: { reactions: { _id: params.reactionId } } },
+        { new: true }
+      )
       .then((thoughtData) => {
         if (!thoughtData) {
           res.status(404).json({ message: "No thought found with this id!" });
